@@ -7,10 +7,15 @@ public class TargetDetector {
 	
 	public TargetDetector() {}
 	
-	
 	///////////////////////////////////////
 	//////////// PUBLIC INTERFACE /////////
 	///////////////////////////////////////
+	
+    private double tgt_x;
+    private double tgt_y;
+    private double tgt_r;  // target radius/diameter/extent
+    private BufferedImage processedImage;
+    private boolean success;
 	
 	public boolean isTargetFound()
 	{
@@ -34,7 +39,8 @@ public class TargetDetector {
 		return tgt_r;
 	}
 	
-	// A method to return the 'processed' image annotated with debug info
+	// A method to return the 'processed' image 
+	// This is the image annotated with debug info
 	public BufferedImage getProcessedImage() {
 		return processedImage;
 	}
@@ -86,7 +92,6 @@ public class TargetDetector {
         
         boolean targetSuccess = leftDet.success && rightDet.success;
         targetSuccess = targetSuccess && (distNorm <= 0.42);
-        		
         
         // output to ivars
         this.tgt_x = centroid_x;
@@ -103,7 +108,6 @@ public class TargetDetector {
     ///////////////////////////////////////
     
     private BufferedImage rawImage;
-    private String imgpath = "./data";
     private int WIDTH = 320;
     private int HEIGHT = 240;
     
@@ -128,36 +132,8 @@ public class TargetDetector {
     // other params
     private final int CONV_R = 10;  // convolution circle mask' radius or diam
 
-    // Results
-    private double tgt_x;
-    private double tgt_y;
-    private double tgt_r;  // target radius/diameter/extent
-    private BufferedImage processedImage;
-    private boolean success;
-
-    // Temporary buffers
-
     private double sq(double x) {
         return x * x;
-    }
-
-    public static BufferedImage getImageFromArray(double[][] pixels, int width, int height) {
-        int[] tmp = new int[3 * height * width];
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-
-        double max = 0.0;
-        for (int row = 0; row < height; ++row) {
-            for (int col = 0; col < width; ++col) {
-                max = Math.max(max, pixels[row][col]);
-            }
-        }
-        double scale = 1.0 / max;
-        for (int row = 0; row < height; ++row) {
-            for (int col = 0; col < width; ++col) {
-                image.setRGB(col, row, 0x00010101 * (int)(255.0 * scale * pixels[row][col]));
-            }
-        }
-        return image;
     }
 
     /*
