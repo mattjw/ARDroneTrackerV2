@@ -118,7 +118,7 @@ public class ProcessedVideoPanel extends JPanel implements DroneVideoListener
     }
     
     private int frameSkipCount = 0;
-    private final int nFrameSkip = 2;  
+    private final int nFrameSkip = 0;  
     // frameSkipCount: cycles through 0, 1, 2, ..., nFrameSkip-1, 0, 1, 2, ...
     //                 frame will not be processed until unless frameSkipCount==0;
     // nFrameSkip: skip `nFrameSkip` frames before re-processing
@@ -126,7 +126,7 @@ public class ProcessedVideoPanel extends JPanel implements DroneVideoListener
 	@Override
     public void frameReceived(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
     {
-		if( frameSkipCount == 0 )
+		if( frameSkipCount == 0 || (0 == nFrameSkip))
 		{
 	        BufferedImage im = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);  // create blank frame
 	        im.setRGB(startX, startY, w, h, rgbArray, offset, scansize);  // copy pixels across 
@@ -138,7 +138,7 @@ public class ProcessedVideoPanel extends JPanel implements DroneVideoListener
 	        repaint();
 		}
         
-		frameSkipCount = (frameSkipCount+1) % nFrameSkip;
+//		frameSkipCount = (frameSkipCount+1) % nFrameSkip;
     }
 
 }

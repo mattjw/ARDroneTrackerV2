@@ -59,9 +59,9 @@ public class TargetDetector {
     	this.DIST_THR = DIST_THR;
     }
     
-	private double countNeighbours(int i, int j, double [][] where, int XR)
+	private double countNeighbours(int i, int j, double [][] where)
 	{
-//		int XR = 5;
+		int XR = 10;
 		double sum = 0.0;
         for (int dj = -XR; dj <= XR; ++dj) {
             for (int di = -XR; di <= XR; ++di) {
@@ -75,27 +75,20 @@ public class TargetDetector {
         return sum;		
 	}
 	
-	private void crossCheck(double[][] left, double[][] right, double x, double y, double tgtr)
+	private void crossCheck(double[][] left, double[][] right)
 	{
+		double THR = 50;
 
-		double R = 70;
-		int XR = (int)Math.min(10, Math.max(1, Math.round(tgtr / 18.0)));
-		double THR = 0.11 * (double)sq(2*XR + 1);
 		for (int j = 0; j < HEIGHT; ++j) {
             for (int i = 0; i < WIDTH; ++i) {
             	double nn = 0.0;
-            	double dist = Math.sqrt(sq(j - y) + sq(i - x));
-            	if (true || (dist < R) || !(x >= 0) || !(y >= 0))
-            	{
-            			
             	if (left[j][i] > 0.1)
             	{
-            		nn = countNeighbours(i, j, right, XR);
+            		nn = countNeighbours(i, j, right);
             	}
             	if (right[j][i] > 0.1)
             	{
-            		nn = countNeighbours(i, j, left, XR);
-            	}
+            		nn = countNeighbours(i, j, left);
             	}
         		if (nn < THR)
         		{
@@ -132,10 +125,8 @@ public class TargetDetector {
 //        
 //		double [][] new_left = new double[HEIGHT][WIDTH];
 //		double [][] new_right = new double[HEIGHT][WIDTH];
-        crossCheck(buff_left, buff_right, this.tgt_x, this.tgt_y, this.tgt_r);
-        crossCheck(buff_left, buff_right, this.tgt_x, this.tgt_y, this.tgt_r);
-
-
+        crossCheck(buff_left, buff_right);
+        crossCheck(buff_left, buff_right);
 //        crossCheck(buff_left, buff_right);
 
 //        crossCheck(convRight, convLeft);

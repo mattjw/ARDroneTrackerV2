@@ -508,14 +508,23 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
         inputFieldsPanel.setLayout( new GridLayout(1,0) );
-        jt_leftR = new JTextField("0.400");
-        jt_leftG = new JTextField("1.850");
-        jt_leftB = new JTextField("0.700");
-        jt_rightR = new JTextField("2.000");
-        jt_rightG = new JTextField("0.200");
+        jt_leftR = new JTextField("0.13");
+        jt_leftG = new JTextField("1.85");
+        jt_leftB = new JTextField("1.02");
+        jt_rightR = new JTextField("1.8");
+        jt_rightG = new JTextField("0.35");
         jt_rightB = new JTextField("0.800");
         jtDistThresh = new JTextField("0.48");
         
+//        // left square (green)
+//        private double TGT_LEFT_R = 0.13;//0.400;
+//        private double TGT_LEFT_G = 1.85;//1.85;
+//        private double TGT_LEFT_B = 1.02;//0.7;
+//        
+//        // right square (red)
+//        private double TGT_RIGHT_R = 1.8;//1.661;
+//        private double TGT_RIGHT_G = 0.35;//0.429;
+//        private double TGT_RIGHT_B = 0.8;//0.911;
         inputFieldsPanel.add( new JLabel("left R", JLabel.RIGHT) ); inputFieldsPanel.add( jt_leftR );
         inputFieldsPanel.add( new JLabel("left G", JLabel.RIGHT) ); inputFieldsPanel.add( jt_leftG );
         inputFieldsPanel.add( new JLabel("left B", JLabel.RIGHT) ); inputFieldsPanel.add( jt_leftB );
@@ -577,7 +586,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double delta = targetY - MIDDLE;
     	
     	float speed = (float)(delta / MIDDLE);
-    	speed = speed*1.0f;
+    	speed = speed*0.5f;
     	
     	float MAX_SPEED = 0.3f;
     	if( speed > MAX_SPEED )
@@ -623,7 +632,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private float getFrontBackTilt()
     {
     	double actualExtent = processedVideoStreamPanel.getDetector().getTargetExtent();
-    	double idealExtent = 65;  // with paddle = 100  // with cup = 40
+    	double idealExtent = 140;  // with paddle = 100  // with cup = 40
     	
     	double tolerance = 30;
     	
@@ -644,6 +653,8 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	{
     		control = 0;
     	}
+    	
+//    	control = (idealExtent - actualExtent) * 0.01;
     	
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
