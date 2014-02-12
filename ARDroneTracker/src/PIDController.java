@@ -61,10 +61,10 @@ class PIDController
         	adjustedControl = control;
         
         
-        System.out.println( String.format(
-        		"control  %.3f  |   adj cont  %.3f   |  error %.3f  |  itnegral %.3f  |  deriv %.3f |    dt %.3f",
-        		control, adjustedControl, error, integral, derivative,
-        		dt) );
+//        System.out.println( String.format(
+//        		"control  %.3f  |   adj cont  %.3f   |  error %.3f  |  itnegral %.3f  |  deriv %.3f |    dt %.3f",
+//        		control, adjustedControl, error, integral, derivative,
+//        		dt) );
         
         
         return adjustedControl;

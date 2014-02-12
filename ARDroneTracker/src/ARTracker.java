@@ -186,6 +186,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
 	            		processedVideoStreamPanel.getDetector().setParams( l_r, l_g, l_b,
 	            				 	 	 		 	 	 	 	 	  	   r_r, r_g, r_b, 
 	            				 	 	 		 	 	 	 	 	  	   distThresh );
+	            		idealExtent = Float.valueOf( jt_idealExtent.getText() );
             		}
             		catch( NumberFormatException ex )
             		{
@@ -229,10 +230,10 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
             			msg += String.format( "f/b tilt:       %.3f \n", front_back_tilt );
             			msg += String.format( "target:         %.3f, %.3f \t", processedVideoStreamPanel.getDetector().getTargetX(), processedVideoStreamPanel.getDetector().getTargetY() );
             			msg += String.format( "targ extent:    %.3f \n", processedVideoStreamPanel.getDetector().getTargetExtent() );
-            			msg += String.format( "targ is found:  %s", processedVideoStreamPanel.getDetector().isTargetFound() );
+            			msg += String.format( "targ is found:  %s\n", processedVideoStreamPanel.getDetector().isTargetFound() );
+            			msg += processedVideoStreamPanel.getDetector().getDebugString();
             			debugLabel.setText( msg );
             		}
-            		
             		//
             		// Process land/takeoff actions
             		try
@@ -470,7 +471,8 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     
     private javax.swing.JTextField jt_leftR, jt_leftG, jt_leftB,
     			 	 	 	       jt_rightR, jt_rightG, jt_rightB,
-    							   jtDistThresh;
+    							   jtDistThresh,
+    							   jt_idealExtent;
     
     private void initComponents() {
     	
@@ -508,7 +510,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         //
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
-        inputFieldsPanel.setLayout( new GridLayout(1,0) );
+        inputFieldsPanel.setLayout( new GridLayout(0,6) );
         jt_leftR = new JTextField("0.32");
         jt_leftG = new JTextField("1.72");
         jt_leftB = new JTextField("0.964");
@@ -516,6 +518,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         jt_rightG = new JTextField("0.396");
         jt_rightB = new JTextField("0.906");
         jtDistThresh = new JTextField("0.45");
+        jt_idealExtent = new JTextField("0.40");
         
 //        // left square (green)
 //        private double TGT_LEFT_R = 0.13;//0.400;
@@ -533,6 +536,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         inputFieldsPanel.add( new JLabel("right G", JLabel.RIGHT) ); inputFieldsPanel.add( jt_rightG );
         inputFieldsPanel.add( new JLabel("right B", JLabel.RIGHT) ); inputFieldsPanel.add( jt_rightB );
         inputFieldsPanel.add( new JLabel("DistThresh", JLabel.RIGHT) ); inputFieldsPanel.add( jtDistThresh );
+        inputFieldsPanel.add( new JLabel("Ideal Extent", JLabel.RIGHT) ); inputFieldsPanel.add( jt_idealExtent );
         
         northPanel.add( inputFieldsPanel );
         
@@ -575,6 +579,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private PIDController pidAngularSpeed;  // currently not used
     private PIDController pidFrontBackTilt;  // currently not used
     private PIDController pidUpDown;  // currently not used
+    private float idealExtent = 0.40f;
 
     
     /*
@@ -644,7 +649,9 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private float getFrontBackTilt()
     {
     	double actualExtent = processedVideoStreamPanel.getDetector().getTargetExtent();
-    	double idealExtent = 0.4;//140;  // with paddle = 100  // with cup = 40
+    	//double idealExtent = 0.4;//140;  // with paddle = 100  // with cup = 40
+    	
+    	// idealExtent now taken from instance variable
     	
 //    	double tolerance = 0;//30;
 //    	
@@ -666,8 +673,8 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
 //    		control = 0;
 //    	}
 //    	
-    	control = (idealExtent - actualExtent) * 0.01;
-    	
+    	control = (this.idealExtent - actualExtent) * 0.5;
+//    	System.out.println(this.idealExtent);
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
 //    	return (float) 0.0;

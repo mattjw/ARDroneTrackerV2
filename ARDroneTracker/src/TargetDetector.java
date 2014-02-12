@@ -11,6 +11,8 @@ public class TargetDetector {
 	//////////// PUBLIC INTERFACE /////////
 	///////////////////////////////////////
 	
+	private String debug = "";
+	
     private double tgt_x;
     private double tgt_y;
     private double tgt_r;  // target radius/diameter/extent
@@ -43,6 +45,11 @@ public class TargetDetector {
 		double X3 = 75.811;
 		double y = (x * X1 + X3) / (x - X2);
 		return y;
+	}
+	
+	public String getDebugString()
+	{
+		return debug;
 	}
 	
 	// A method to return the 'processed' image 
@@ -231,7 +238,8 @@ public class TargetDetector {
                 // debug
                 if( (i==160) && (j==120) )
                 {
-                	System.out.println( String.format("r  %.3f   g  %.3f    b %.3f  %f", r, g, b, DIST_THR) );
+                	debug = String.format("r  %.3f   g  %.3f    b %.3f  %f", r, g, b, DIST_THR);
+                	//System.out.println( String.format("r  %.3f   g  %.3f    b %.3f  %f", r, g, b, DIST_THR) );
 //                	System.out.println( String.format("tgtr  %.3f   tgtg  %.3f    tgtb %.3f  %f", TGT_R, TGT_G, TGT_B, DIST_THR) );
                 }
                 
