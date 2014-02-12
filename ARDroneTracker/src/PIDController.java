@@ -1,3 +1,5 @@
+import java.util.Calendar;
+
 class PIDController 
 {
     private double Kp = 1.0;
@@ -7,7 +9,8 @@ class PIDController
     private double integral = 0.0;
     private double laste = 0.0;
     
-    private double maxControlMagnitude = 1.0; 
+    private double maxControlMagnitude = 1.0;
+    private double lastT = -1.0;
     // NOT used in the control process
     // the control output will just be cutoff at this value
     
@@ -25,11 +28,24 @@ class PIDController
     
     // let dt be zero because equal sampling
     // NOT used in this method anyway!
-    public double control(double actual, double desired, double dt) 
+    public double control(double actual, double desired) 
     {
+    	Calendar lCDateTime = Calendar.getInstance();
+    	double T = lCDateTime.getTimeInMillis();
+    	if (lastT < 0.0)
+    	{
+    		lastT = T;
+    		return 0.0;
+    	}
+    	
+
+    	
+    	double dt = T - lastT;
+    	lastT = T;
+    	
         double error = actual - desired;
-        integral += error;
-        double derivative = error - laste;
+        integral += error * dt;
+        double derivative = (error - laste) / dt;
         laste = error;
         
         double control = Kp*error + Ki*integral + Kd*derivative;
@@ -44,12 +60,12 @@ class PIDController
         else
         	adjustedControl = control;
         
-        /*
+        
         System.out.println( String.format(
-        		"control  %.3f  |   adj cont  %.3f   |  error %.3f  |  itnegral %.3f  |  deriv %.3f |    maxControlMagnitude %.3f",
+        		"control  %.3f  |   adj cont  %.3f   |  error %.3f  |  itnegral %.3f  |  deriv %.3f |    dt %.3f",
         		control, adjustedControl, error, integral, derivative,
-        		this.maxControlMagnitude) );
-        */
+        		dt) );
+        
         
         return adjustedControl;
     }

@@ -36,7 +36,13 @@ public class TargetDetector {
 	{
 		// Some sort of measure of the size of the target. Unit unknown.
 		// Let's call it the target's "extent". 
-		return tgt_r;
+//		return tgt_r;
+		double x = tgt_r;
+		double X1 = -0.035171;
+		double X2 =  -9.1622;
+		double X3 = 75.811;
+		double y = (x * X1 + X3) / (x - X2);
+		return y;
 	}
 	
 	// A method to return the 'processed' image 
@@ -79,8 +85,11 @@ public class TargetDetector {
 	{
 
 		double R = 70;
-		int XR = (int)Math.min(10, Math.max(1, Math.round(tgtr / 18.0)));
-		double THR = 0.11 * (double)sq(2*XR + 1);
+//		int XR = (int)Math.min(10, Math.max(1, Math.round(tgtr / 18.0)));
+		int XR = 10;
+//		double THR = 0.11 * (double)sq(2*XR + 1);
+		double THR = 0.08 * (double)sq(2*XR + 1);
+
 		for (int j = 0; j < HEIGHT; ++j) {
             for (int i = 0; i < WIDTH; ++i) {
             	double nn = 0.0;

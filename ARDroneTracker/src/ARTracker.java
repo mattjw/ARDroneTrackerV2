@@ -151,20 +151,21 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
             /* --PID controllers not being used--
             //
             // Prep PID controllers
-            double dt = 0.001; // some measure of time between two frames
-            
-            double angspdKp = 1.0 / 160.0;  // up to 160 pixels left, up to 160 
-            double angspdKi = 0.0005 * dt;  // keep this small; close to zero 
-            double angspdKd = 0; // 0.1 / dt;
-            pidAngularSpeed = new PIDController( angspdKp, angspdKi, angspdKd,   1.0    );
+
             
             double frobaKp = 1.0 / 160.0;  // up to 160 pixels left, up to 160 
             double frobaKi = 0.000000001 * dt;  // keep this small; close to zero 
             double frobaKd = 0; // 0.1 / dt;
             pidFrontBackTilt = new PIDController( frobaKp, frobaKi, frobaKd,   0.12    );
             */
+          double dt = 0.001; // some measure of time between two frames
+          
+          double angspdKp = 1.0 * 0.01;//1.0 / 160.0;  // up to 160 pixels left, up to 160 
+          double angspdKi = 1.0 * 0.000001;//0.0005 * dt;  // keep this small; close to zero 
+          double angspdKd = 0.0;//0; // 0.1 / dt;
+          pidAngularSpeed = new PIDController( angspdKp, angspdKi, angspdKd,   10.0    );
             
-            
+          pidUpDown =  new PIDController( 1.0 * 0.01, 1.0 * 0.0, 0.0,   10.0    );
             // MAIN EVENT LOOP
             try 
             {
@@ -508,13 +509,13 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
         inputFieldsPanel.setLayout( new GridLayout(1,0) );
-        jt_leftR = new JTextField("0.13");
-        jt_leftG = new JTextField("1.85");
-        jt_leftB = new JTextField("1.02");
-        jt_rightR = new JTextField("1.8");
-        jt_rightG = new JTextField("0.35");
-        jt_rightB = new JTextField("0.800");
-        jtDistThresh = new JTextField("0.48");
+        jt_leftR = new JTextField("0.32");
+        jt_leftG = new JTextField("1.72");
+        jt_leftB = new JTextField("0.964");
+        jt_rightR = new JTextField("1.7");
+        jt_rightG = new JTextField("0.396");
+        jt_rightB = new JTextField("0.906");
+        jtDistThresh = new JTextField("0.45");
         
 //        // left square (green)
 //        private double TGT_LEFT_R = 0.13;//0.400;
@@ -573,6 +574,8 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     //
     private PIDController pidAngularSpeed;  // currently not used
     private PIDController pidFrontBackTilt;  // currently not used
+    private PIDController pidUpDown;  // currently not used
+
     
     /*
      * Control value for up/down motion.
@@ -583,23 +586,28 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double MIDDLE = MAX/2;
     	
     	double targetY = processedVideoStreamPanel.getDetector().getTargetY();
-    	double delta = targetY - MIDDLE;
+//    	double delta = targetY - MIDDLE;
+//    	
+//    	float speed = (float)(delta / MIDDLE);
+//    	speed = speed*0.5f;
+//    	
+//    	float MAX_SPEED = 0.3f;
+//    	if( speed > MAX_SPEED )
+//    		speed = MAX_SPEED;
+//    	
+//    	if( speed < -MAX_SPEED )
+//    		speed = -MAX_SPEED;
     	
-    	float speed = (float)(delta / MIDDLE);
-    	speed = speed*0.5f;
-    	
-    	float MAX_SPEED = 0.3f;
-    	if( speed > MAX_SPEED )
-    		speed = MAX_SPEED;
-    	
-    	if( speed < -MAX_SPEED )
-    		speed = -MAX_SPEED;
+    	double speed = -pidUpDown.control(targetY, MIDDLE);
+    	if (speed < -0.2)
+    		speed = -0.2;
     	
     	// positive vertical speed = rise
     	// negative vertical speed = descend
     	
-    	speed = -speed;  // flip 
-    	return speed;
+//    	speed = -speed;  // flip 
+    	return (float) speed;
+//    	return speed;
     }
     
     
@@ -609,20 +617,24 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private float getAngularSpeed()
     {
     	double targetX = processedVideoStreamPanel.getDetector().getTargetX();
-    	double delta = targetX - 160;
+//    	double delta = targetX - 160;
+//    	
+//    	float speed = (float)(delta / 160);
+////    	speed = speed*1f;
+//    	speed = speed*1f;
     	
-    	float speed = (float)(delta / 160);
-    	speed = speed*1f;
+    	double speed = pidAngularSpeed.control(targetX, 160.0);
     	
-    	float max = 0.5f; 
+//    	float max = 0.5f; 
+//    	double max = 4.0f; 
+//    	
+//    	if( speed > max )
+//    		speed = max;
+//    	
+//    	if( speed < -max )
+//    		speed = -max;
     	
-    	if( speed > max )
-    		speed = max;
-    	
-    	if( speed < -max )
-    		speed = -max;
-    	
-    	return speed;
+    	return (float) (speed);
     	// negative return -> negative angular speed -> a negative value makes it spin left
     }
     
@@ -632,32 +644,33 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private float getFrontBackTilt()
     {
     	double actualExtent = processedVideoStreamPanel.getDetector().getTargetExtent();
-    	double idealExtent = 140;  // with paddle = 100  // with cup = 40
+    	double idealExtent = 0.4;//140;  // with paddle = 100  // with cup = 40
     	
-    	double tolerance = 30;
-    	
+//    	double tolerance = 0;//30;
+//    	
     	double control;
-    	double stepControl = 0.12;
-    	
-    	if( actualExtent < (idealExtent-(tolerance)) )
-    	{
-    		// move drone away
-    		control = -stepControl;
-    	}
-    	else if( actualExtent > (idealExtent+(tolerance)) )
-    	{
-    		// move drone closer
-    		control = +stepControl;
-    	}
-    	else
-    	{
-    		control = 0;
-    	}
-    	
-//    	control = (idealExtent - actualExtent) * 0.01;
+//    	double stepControl = 0.4;//0.12;
+//    	
+//    	if( actualExtent < (idealExtent-(tolerance)) )
+//    	{
+//    		// move drone away
+//    		control = -stepControl;
+//    	}
+//    	else if( actualExtent > (idealExtent+(tolerance)) )
+//    	{
+//    		// move drone closer
+//    		control = +stepControl;
+//    	}
+//    	else
+//    	{
+//    		control = 0;
+//    	}
+//    	
+    	control = (idealExtent - actualExtent) * 0.01;
     	
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
+//    	return (float) 0.0;
     	return (float)control;
     }
 }
