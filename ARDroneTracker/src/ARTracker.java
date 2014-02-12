@@ -469,7 +469,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     
     private javax.swing.JTextField jt_leftR, jt_leftG, jt_leftB,
     			 	 	 	       jt_rightR, jt_rightG, jt_rightB,
-    							   jtDistThresh;
+    							   jtDistThresh, jt_idealExtent;
     
     private void initComponents() {
     	
@@ -507,14 +507,15 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         //
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
-        inputFieldsPanel.setLayout( new GridLayout(1,0) );
+        inputFieldsPanel.setLayout( new GridLayout(0,6) );
         jt_leftR = new JTextField("0.13");
         jt_leftG = new JTextField("1.85");
         jt_leftB = new JTextField("1.02");
         jt_rightR = new JTextField("1.8");
         jt_rightG = new JTextField("0.35");
         jt_rightB = new JTextField("0.800");
-        jtDistThresh = new JTextField("0.48");
+        jtDistThresh = new JTextField("0.48");  // colour threshold
+        jt_idealExtent = new JTextField("0.4");
         
 //        // left square (green)
 //        private double TGT_LEFT_R = 0.13;//0.400;
@@ -531,7 +532,8 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         inputFieldsPanel.add( new JLabel("right R", JLabel.RIGHT) ); inputFieldsPanel.add( jt_rightR );
         inputFieldsPanel.add( new JLabel("right G", JLabel.RIGHT) ); inputFieldsPanel.add( jt_rightG );
         inputFieldsPanel.add( new JLabel("right B", JLabel.RIGHT) ); inputFieldsPanel.add( jt_rightB );
-        inputFieldsPanel.add( new JLabel("DistThresh", JLabel.RIGHT) ); inputFieldsPanel.add( jtDistThresh );
+        inputFieldsPanel.add( new JLabel("Dist thresh", JLabel.RIGHT) ); inputFieldsPanel.add( jtDistThresh );
+        inputFieldsPanel.add( new JLabel("Ideal extent", JLabel.RIGHT) ); inputFieldsPanel.add( jt_idealExtent );
         
         northPanel.add( inputFieldsPanel );
         
