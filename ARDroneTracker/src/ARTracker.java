@@ -595,28 +595,28 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double MIDDLE = MAX/2;
     	
     	double targetY = processedVideoStreamPanel.getDetector().getTargetY();
-//    	double delta = targetY - MIDDLE;
-//    	
-//    	float speed = (float)(delta / MIDDLE);
-//    	speed = speed*0.5f;
-//    	
-//    	float MAX_SPEED = 0.3f;
-//    	if( speed > MAX_SPEED )
-//    		speed = MAX_SPEED;
-//    	
-//    	if( speed < -MAX_SPEED )
-//    		speed = -MAX_SPEED;
+    	double delta = targetY - MIDDLE;
     	
-    	double speed = -pidUpDown.control(targetY, MIDDLE);
-    	if (speed < -0.2)
-    		speed = -0.2;
+    	float speed = (float)(delta / MIDDLE);
+    	speed = speed*0.5f;
+    	
+    	float MAX_SPEED = 0.3f;
+    	if( speed > MAX_SPEED )
+    		speed = MAX_SPEED;
+    	
+    	if( speed < -MAX_SPEED )
+    		speed = -MAX_SPEED;
+    	
+//    	double speed = -pidUpDown.control(targetY, MIDDLE);
+//    	if (speed < -0.2)
+//    		speed = -0.2;
     	
     	// positive vertical speed = rise
     	// negative vertical speed = descend
     	
-//    	speed = -speed;  // flip 
-    	return (float) speed;
-//    	return speed;
+    	speed = -speed;  // flip 
+//    	return (float) speed;
+    	return speed;
     }
     
     
@@ -653,31 +653,31 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     private float getFrontBackTilt()
     {
     	double actualExtent = processedVideoStreamPanel.getDetector().getTargetExtent();
-    	//double idealExtent = 0.4;//140;  // with paddle = 100  // with cup = 40
+    	double idealExtent = 0.52;//140;  // with paddle = 100  // with cup = 40
     	
     	// idealExtent now taken from instance variable
     	
-//    	double tolerance = 0;//30;
+    	double tolerance = 0.05;//30;
 //    	
     	double control;
-//    	double stepControl = 0.4;//0.12;
-//    	
-//    	if( actualExtent < (idealExtent-(tolerance)) )
-//    	{
-//    		// move drone away
-//    		control = -stepControl;
-//    	}
-//    	else if( actualExtent > (idealExtent+(tolerance)) )
-//    	{
-//    		// move drone closer
-//    		control = +stepControl;
-//    	}
-//    	else
-//    	{
-//    		control = 0;
-//    	}
-//    	
-    	control = (this.idealExtent - actualExtent) * 0.5;
+    	double stepControl = 0.12;
+    	
+    	if( actualExtent < (idealExtent-(tolerance)) )
+    	{
+    		// move drone away
+    		control = -stepControl;
+    	}
+    	else if( actualExtent > (idealExtent+(tolerance)) )
+    	{
+    		// move drone closer
+    		control = +stepControl;
+    	}
+    	else
+    	{
+    		control = 0;
+    	}
+    	
+//    	control = (this.idealExtent - actualExtent) * 0.5;
 //    	System.out.println(this.idealExtent);
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
