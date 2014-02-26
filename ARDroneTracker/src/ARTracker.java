@@ -163,7 +163,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
           double angspdKp = 1.0 * 0.01;//1.0 / 160.0;  // up to 160 pixels left, up to 160 
           double angspdKi = 1.0 * 0.000001;//0.0005 * dt;  // keep this small; close to zero 
           double angspdKd = 0.0;//0; // 0.1 / dt;
-          pidAngularSpeed = new PIDController( angspdKp, angspdKi, angspdKd,   10.0    );
+          pidAngularSpeed = new PIDController( angspdKp, angspdKi, angspdKd,   5.0    );
             
           pidUpDown =  new PIDController( 1.0 * 0.01, 1.0 * 0.0, 0.0,   10.0    );
             // MAIN EVENT LOOP
@@ -518,7 +518,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         jt_rightR = new JTextField("1.7");
         jt_rightG = new JTextField("0.396");
         jt_rightB = new JTextField("0.906");
-        jtDistThresh = new JTextField("0.45");
+        jtDistThresh = new JTextField("0.4");
         jt_idealExtent = new JTextField("0.40");
 
         
@@ -598,9 +598,9 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double delta = targetY - MIDDLE;
     	
     	float speed = (float)(delta / MIDDLE);
-    	speed = speed*0.5f;
+    	speed = speed*1f;
     	
-    	float MAX_SPEED = 0.3f;
+    	float MAX_SPEED = 1.0f;
     	if( speed > MAX_SPEED )
     		speed = MAX_SPEED;
     	
@@ -660,7 +660,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double tolerance = 0.05;//30;
 //    	
     	double control;
-    	double stepControl = 0.12;
+    	double stepControl = 0.06;
     	
     	if( actualExtent < (idealExtent-(tolerance)) )
     	{
@@ -682,7 +682,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
 //    	return (float) 0.0;
-    	return (float)control;
+    	return (float)(-control);
     }
 }
 
