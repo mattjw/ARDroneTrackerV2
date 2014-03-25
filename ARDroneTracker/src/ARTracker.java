@@ -519,7 +519,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         jt_rightG = new JTextField("0.396");
         jt_rightB = new JTextField("0.906");
         jtDistThresh = new JTextField("0.4");
-        jt_idealExtent = new JTextField("0.40");
+        jt_idealExtent = new JTextField("-9999"); //.45. not used
 
         
 //        // left square (green)
@@ -598,7 +598,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double delta = targetY - MIDDLE;
     	
     	float speed = (float)(delta / MIDDLE);
-    	speed = speed*1f;
+    	speed = speed*0.4f;
     	
     	float MAX_SPEED = 1.0f;
     	if( speed > MAX_SPEED )
@@ -647,42 +647,75 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	// negative return -> negative angular speed -> a negative value makes it spin left
     }
     
+    private double sq( double x )
+    {
+    	return x * x;
+    }
+    
+    private double abs( double x )
+    {
+    	if( x < 0.0 )
+    		return -x;
+    	else
+    		return x;
+    }
+    
     /*
      * Control value for forwards/backwards motion.
      */
     private float getFrontBackTilt()
     {
     	double actualExtent = processedVideoStreamPanel.getDetector().getTargetExtent();
-    	double idealExtent = 0.52;//140;  // with paddle = 100  // with cup = 40
+    	
+    	// idealExtent taken from instance var
+    	
+    	//double idealExtent = 0.52;//140;  // with paddle = 100  // with cup = 40
     	
     	// idealExtent now taken from instance variable
     	
-    	double tolerance = 0.05;//30;
-//    	
-    	double control;
-    	double stepControl = 0.06;
+    	double tolerance = 0.03; // don't do movement if within tolerance
     	
-    	if( actualExtent < (idealExtent-(tolerance)) )
-    	{
-    		// move drone away
-    		control = -stepControl;
-    	}
-    	else if( actualExtent > (idealExtent+(tolerance)) )
-    	{
-    		// move drone closer
-    		control = +stepControl;
-    	}
-    	else
-    	{
-    		control = 0;
-    	}
+    	double control;
+    	
+    	/*double prop = (idealExtent-actualExtent) / 0.4f;  // -ve if too far away,*/
+    	
+    	double a = 0.2;  // minimum extent (experiemntally, 0.2)
+    	double b = 0.8;  // maximum extent (experimentally, 1.0 is usually as high as it goes) 
+    	double x = actualExtent;  // distance
+    	double mag = 0.6;  // dampening. low value means more dampening.
+    	
+    	// magnitude of control
+    	control = (sq(x - (a+b)/2.0) /  abs(b-a)) * mag;
+    	
+    	// handle sign (direction)
+    	if( x < ((a+b)/2.0))
+    		control = -control;
+    	
+    	if( control > mag )
+    		control = mag;
+    	
+    	if( control < -mag )
+    		control = -mag;
+    	
+    	//double prop = actualExtent - idealExtent;
+    	
+    	/*
+    	 * now using "table distance" as extent. So, experimentally...
+    	 * 0.2 is minimum extent => minimum distance => very close
+    	 * 1.0 is maximum extent => maximum distance => too far
+    	 * 
+    	 * Set 0.6 as ideal extent (in between).
+    	 */
+    	
     	
 //    	control = (this.idealExtent - actualExtent) * 0.5;
 //    	System.out.println(this.idealExtent);
+    	// the ofllowing might be wrong...
     	// A negative value makes the drone lower its nose, thus flying frontward.
     	// A positive value makes the drone raise its nose, thus flying backward.
 //    	return (float) 0.0;
-    	return (float)(-control);
+    	//System.out.println(control);
+    	return (float)-control;
     }
 }
 
