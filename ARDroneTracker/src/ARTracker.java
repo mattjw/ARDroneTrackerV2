@@ -512,13 +512,13 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
         inputFieldsPanel.setLayout( new GridLayout(0,6) );
-        jt_leftR = new JTextField("0.32");
-        jt_leftG = new JTextField("1.72");
-        jt_leftB = new JTextField("0.964");
-        jt_rightR = new JTextField("1.7");
-        jt_rightG = new JTextField("0.396");
-        jt_rightB = new JTextField("0.906");
-        jtDistThresh = new JTextField("0.4");
+        jt_leftR = new JTextField("0.5");
+        jt_leftG = new JTextField("1.6");
+        jt_leftB = new JTextField("0.9");
+        jt_rightR = new JTextField("2.0");
+        jt_rightG = new JTextField("0.2");
+        jt_rightB = new JTextField("0.9");
+        jtDistThresh = new JTextField("0.35");
         jt_idealExtent = new JTextField("-9999"); //.45. not used
 
         
@@ -597,26 +597,50 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double targetY = processedVideoStreamPanel.getDetector().getTargetY();
     	double delta = targetY - MIDDLE;
     	
-    	float speed = (float)(delta / MIDDLE);
-    	speed = speed*0.4f;
+    	double x = (float)(delta / MIDDLE);
     	
-    	float MAX_SPEED = 1.0f;
-    	if( speed > MAX_SPEED )
-    		speed = MAX_SPEED;
+//    	speed = speed*0.4f;
+//    	
+//    	float MAX_SPEED = 1.0f;
+//    	if( speed > MAX_SPEED )
+//    		speed = MAX_SPEED;
+//    	
+//    	if( speed < -MAX_SPEED )
+//    		speed = -MAX_SPEED;
+//    	
+////    	double speed = -pidUpDown.control(targetY, MIDDLE);
+////    	if (speed < -0.2)
+////    		speed = -0.2;
+//    	
+//    	// positive vertical speed = rise
+//    	// negative vertical speed = descend
+//    	
+//    	speed = -speed;  // flip 
+////    	return (float) speed;
     	
-    	if( speed < -MAX_SPEED )
-    		speed = -MAX_SPEED;
+	double control;
     	
-//    	double speed = -pidUpDown.control(targetY, MIDDLE);
-//    	if (speed < -0.2)
-//    		speed = -0.2;
+    	/*double prop = (idealExtent-actualExtent) / 0.4f;  // -ve if too far away,*/
     	
-    	// positive vertical speed = rise
-    	// negative vertical speed = descend
+    	double a = -1.0;  // minimum extent (experiemntally, 0.2)
+    	double b = 1.0;  // maximum extent (experimentally, 1.0 is usually as high as it goes) 
+    	double mag = 1.2;  // dampening. low value means more dampening.
     	
-    	speed = -speed;  // flip 
-//    	return (float) speed;
-    	return speed;
+    	// magnitude of control
+    	control = (sq(x - (a+b)/2.0) /  abs(b-a)) * mag;
+    	
+    	// handle sign (direction)
+    	if( x < 0)
+    		control = -control;
+    	
+//    	if( control > mag )
+//    		control = mag;
+//    	
+//    	if( control < -mag )
+//    		control = -mag;
+    	control = -control;
+    	System.out.println(control);
+    	return (float)control;
     }
     
     

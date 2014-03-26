@@ -191,13 +191,13 @@ public class TargetDetector {
     // RGB ratios.)
     
     // left square (green)
-    private double TGT_LEFT_R = 0.13;//0.400;
-    private double TGT_LEFT_G = 1.85;//1.85;
-    private double TGT_LEFT_B = 1.02;//0.7;
+    private double TGT_LEFT_R = 0.5;//0.13;//0.400;
+    private double TGT_LEFT_G = 1.6;//1.85;//1.85;
+    private double TGT_LEFT_B = 0.9;//1.02;//0.7;
     
     // right square (red)
-    private double TGT_RIGHT_R = 1.8;//1.661;
-    private double TGT_RIGHT_G = 0.35;//0.429;
+    private double TGT_RIGHT_R = 2.0;//1.661;
+    private double TGT_RIGHT_G = 0.2;//0.429;
     private double TGT_RIGHT_B = 0.8;//0.911;
     
     // thresholds
