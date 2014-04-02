@@ -512,13 +512,13 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
         // North panel area
         JPanel inputFieldsPanel = new JPanel();
         inputFieldsPanel.setLayout( new GridLayout(0,6) );
-        jt_leftR = new JTextField("0.5");
+        jt_leftR = new JTextField("0.34");
         jt_leftG = new JTextField("1.6");
-        jt_leftB = new JTextField("0.9");
-        jt_rightR = new JTextField("2.0");
-        jt_rightG = new JTextField("0.2");
-        jt_rightB = new JTextField("0.9");
-        jtDistThresh = new JTextField("0.35");
+        jt_leftB = new JTextField("1.15");
+        jt_rightR = new JTextField("1.6");
+        jt_rightG = new JTextField("0.235");
+        jt_rightB = new JTextField("1.0");
+        jtDistThresh = new JTextField("0.38");
         jt_idealExtent = new JTextField("-9999"); //.45. not used
 
         
@@ -639,7 +639,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
 //    	if( control < -mag )
 //    		control = -mag;
     	control = -control;
-    	System.out.println(control);
+    	//System.out.println(control);
     	return (float)control;
     }
     
@@ -704,9 +704,9 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	/*double prop = (idealExtent-actualExtent) / 0.4f;  // -ve if too far away,*/
     	
     	double a = 0.2;  // minimum extent (experiemntally, 0.2)
-    	double b = 0.8;  // maximum extent (experimentally, 1.0 is usually as high as it goes) 
+    	double b = 0.6;  // maximum extent (experimentally, 1.0 is usually as high as it goes) 
     	double x = actualExtent;  // distance
-    	double mag = 0.6;  // dampening. low value means more dampening.
+    	double mag = 1.5;  // dampening. low value means more dampening.
     	
     	// magnitude of control
     	control = (sq(x - (a+b)/2.0) /  abs(b-a)) * mag;
