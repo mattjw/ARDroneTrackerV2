@@ -706,7 +706,7 @@ public class ARTracker extends javax.swing.JFrame implements DroneStatusChangeLi
     	double a = 0.2;  // minimum extent (experiemntally, 0.2)
     	double b = 0.6;  // maximum extent (experimentally, 1.0 is usually as high as it goes) 
     	double x = actualExtent;  // distance
-    	double mag = 1.5;  // dampening. low value means more dampening.
+    	double mag = 1.2;  // dampening. low value means more dampening.
     	
     	// magnitude of control
     	control = (sq(x - (a+b)/2.0) /  abs(b-a)) * mag;
